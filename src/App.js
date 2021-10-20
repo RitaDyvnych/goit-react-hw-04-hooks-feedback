@@ -1,52 +1,45 @@
 import "./App.css";
-import { Component } from "react";
+import { useState, useEffect, useRef } from "react";
 import Section from "./components/section/Section";
 
-class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+export default function App() {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+
+  const handleClickGood = () => {
+    setGood((prev) => prev + 1);
+  };
+  const handleClickNeutral = () => {
+    setNeutral((prev) => prev + 1);
+  };
+  const handleClickBad = () => {
+    setBad((prev) => prev + 1);
   };
 
-  handleClickGood = () => {
-    this.setState((prevState) => {
-      return { good: prevState.good + 1 };
-    });
-  };
-  handleClickNeutral = () => {
-    this.setState((prevState) => {
-      return { neutral: prevState.neutral + 1 };
-    });
-  };
-  handleClickBad = () => {
-    this.setState((prevState) => {
-      return { bad: prevState.bad + 1 };
-    });
-  };
+  let countTotalFeedback = useRef(0);
+  let countPositiveFeedbackPercentage = useRef(0);
 
-  render() {
-    const { good, neutral, bad } = this.state;
-    const countTotalFeedback = good + neutral + bad;
-    const countPositiveFeedbackPercentage = Math.round(
-      (good / countTotalFeedback) * 100
+  useEffect(() => {
+    countTotalFeedback.current = good + neutral + bad;
+    countPositiveFeedbackPercentage.current = Math.round(
+      (good / countTotalFeedback.current) * 100
     );
-    return (
-      <div className="App">
-        <Section
-          title={"Please leave feedback"}
-          handleClickGood={this.handleClickGood}
-          handleClickNeutral={this.handleClickNeutral}
-          handleClickBad={this.handleClickBad}
-          good={good}
-          neutral={neutral}
-          bad={bad}
-          totalFeedback={countTotalFeedback}
-          positiveFeedbackPercentage={countPositiveFeedbackPercentage}
-        />
-      </div>
-    );
-  }
+  });
+
+  return (
+    <div className="App">
+      <Section
+        title={"Please leave feedback"}
+        handleClickGood={handleClickGood}
+        handleClickNeutral={handleClickNeutral}
+        handleClickBad={handleClickBad}
+        good={good}
+        neutral={neutral}
+        bad={bad}
+        totalFeedback={countTotalFeedback.current}
+        positiveFeedbackPercentage={countPositiveFeedbackPercentage.current}
+      />
+    </div>
+  );
 }
-
-export default App;
